@@ -8,8 +8,10 @@ import {
     Button,
     Box,
     Paper,
+    IconButton,
 } from '@mui/material';
-import { useParams } from 'react-router-dom';
+import { ArrowBack } from '@mui/icons-material';
+import { useParams, useNavigate } from 'react-router-dom';
 import { portfolioItems } from '../portfolioData';
 import NavBar from '../navbar/navbar';
 
@@ -75,10 +77,20 @@ const PortfolioItemDetailsComponent = () => {
 };
 
 const PortfolioItemDetails = () => {
+    const navigate = useNavigate();
+
     return (
         <>
             <NavBar />
             <Box sx={{ padding: 4 }}>
+                <IconButton
+                    edge="start"
+                    color="inherit"
+                    onClick={() => navigate('/portfolio')}
+                    sx={{ mb: 2 }}
+                >
+                    <ArrowBack />
+                </IconButton>
                 <PortfolioItemDetailsComponent />
             </Box>
         </>
