@@ -8,6 +8,8 @@ const importAll = (requireContext) => {
 
 const images = importAll(require.context('./images', false, /\.(png|jpe?g|svg)$/));
 
+const imageBase = "https://github.com/JWriter20/KyliePortfolio/blob/main/src/images/";
+
 // Function to find the image source by filename
 const findImageByName = (name) => {
     const image = images.find(img => img.name === name);

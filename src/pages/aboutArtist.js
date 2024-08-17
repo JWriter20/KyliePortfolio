@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Grid, Typography, Box, Card, CardMedia, CardContent } from '@mui/material';
 import NavBar from '../navbar/navbar';
+import KylieWorking from '../images/aboutTheArtist.jpg';
 
 const AboutTheArtistComponent = () => {
     return (
@@ -36,8 +37,8 @@ const AboutTheArtistComponent = () => {
                         <CardMedia
                             component="img"
                             alt="Artist Portrait"
-                            height="100%"
-                            image="/path-to-your-image/artist-portrait.jpg"
+                            width="100%"
+                            image={KylieWorking}
                             title="Artist Portrait"
                         />
                     </Card>

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Container, Grid, Typography, TextField, Button, Box, Card, CardMedia } from '@mui/material';
 import NavBar from '../navbar/navbar';
+import contactKiwi from '../images/contactKylie.jpg';
+
 
 const ContactPageComponent = () => {
     return (
@@ -52,7 +54,7 @@ const ContactPageComponent = () => {
                             component="img"
                             alt="Artwork"
                             height="100%"
-                            image="/path-to-your-image/artwork.jpg"
+                            image={contactKiwi}
                             title="Artwork Title"
                         />
                     </Card>
