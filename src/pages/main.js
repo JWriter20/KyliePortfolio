@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Card,
     CardActionArea,
@@ -6,25 +6,24 @@ import {
     CardContent,
     Typography,
     Grid,
-    Box
+    Box,
+    Tab,
+    Tabs
 } from '@mui/material';
 import { portfolioItems } from '../portfolioData';
 import NavBar from '../navbar/navbar';
 import { useNavigate } from 'react-router-dom';
 
-
 const PortfolioItem = ({ item }) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
-        // Handle the click event, e.g., navigate to a details page or open a modal
-        console.log(`Clicked on ${item.title}`);
-        navigate(`/details/${item.id}`)
+        navigate(`/details/${item.id}`);
     };
 
     return (
         <Grid item xs={12} sm={6} md={4}>
-            <Card>
+            <Card sx={{ backgroundColor: '#fff', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '12px' }}>
                 <CardActionArea onClick={handleClick}>
                     <CardMedia
                         component="img"
@@ -33,10 +32,10 @@ const PortfolioItem = ({ item }) => {
                         alt={item.title}
                     />
                     <CardContent>
-                        <Typography variant="h6" component="div">
+                        <Typography variant="h6" component="div" color="text.primary" sx={{ fontWeight: 'bold' }}>
                             {item.title}
                         </Typography>
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography variant="body2" color="text.secondary" sx={{ marginBottom: '8px' }}>
                             {item.details}
                         </Typography>
                         <Typography variant="body1" color="text.primary">
@@ -50,12 +49,36 @@ const PortfolioItem = ({ item }) => {
 };
 
 const Portfolio = () => {
+    const [selectedTab, setSelectedTab] = useState(0);
+
+    const handleTabChange = (event, newValue) => {
+        setSelectedTab(newValue);
+    };
+
+    const filterType = ['All', 'pencil', 'acrylic', 'watercolor'][selectedTab];
+
+    const filteredItems = filterType === 'All'
+        ? portfolioItems
+        : portfolioItems.filter(item => item.type === filterType);
+
     return (
         <>
             <NavBar />
-            <Box sx={{ padding: 4, backgroundColor: '#f7f9fc', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+            <Box sx={{ padding: 4, backgroundColor: '#f7f9fc', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Tabs
+                    value={selectedTab}
+                    onChange={handleTabChange}
+                    textColor="primary"
+                    indicatorColor="primary"
+                    sx={{ marginBottom: 4 }}
+                >
+                    <Tab label="All" />
+                    <Tab label="Pencil" />
+                    <Tab label="Acrylic" />
+                    <Tab label="Watercolor" />
+                </Tabs>
                 <Grid container spacing={4}>
-                    {portfolioItems.map((item, index) => (
+                    {filteredItems.map((item, index) => (
                         <PortfolioItem key={index} item={item} />
                     ))}
                 </Grid>
@@ -63,6 +86,5 @@ const Portfolio = () => {
         </>
     );
 };
-
 
 export default Portfolio;

@@ -21,6 +21,7 @@ export const portfolioItems = [
         id: 1,
         title: "Butterfly on Plant",
         price: "$150",
+        type: "watercolor",
         details: "A vibrant depiction of a butterfly resting on a green plant. This piece captures the beauty of nature in a moment of stillness.",
         imageUrl: findImageByName('butterfly_plant.jpeg')
     },
@@ -28,6 +29,7 @@ export const portfolioItems = [
         id: 2,
         title: "Flowing Leaves",
         price: "$120",
+        type: "acrylic",
         details: "An abstract representation of leaves flowing in the wind. The piece uses soft colors to evoke a sense of calm.",
         imageUrl: findImageByName('flow_plant.jpeg') // Corrected 'flow_plany' to 'flow_plant'
     },
@@ -35,6 +37,7 @@ export const portfolioItems = [
         id: 3,
         title: "Flowering Agave",
         price: "$200",
+        type: "pencil",
         details: "A detailed portrayal of an agave plant in full bloom. The rich textures bring the desert plant to life.",
         imageUrl: findImageByName('flower_agave.jpeg')
     },
@@ -42,6 +45,7 @@ export const portfolioItems = [
         id: 4,
         title: "Foldy Plant",
         price: "$110",
+        type: "pencil",
         details: "An artistic interpretation of a plant with folded leaves. The piece plays with light and shadow to create depth.",
         imageUrl: findImageByName('foldy_plant.jpeg')
     },
@@ -49,6 +53,7 @@ export const portfolioItems = [
         id: 5,
         title: "Mini Agave",
         price: "$90",
+        type: "acrylic",
         details: "A small yet detailed depiction of a mini agave plant. Perfect for adding a touch of nature to any space.",
         imageUrl: findImageByName('mini_agave.jpeg')
     },
@@ -56,6 +61,7 @@ export const portfolioItems = [
         id: 6,
         title: "Multi Agave",
         price: "$180",
+        type: "watercolor",
         details: "A collection of agave plants, each with unique characteristics. The artwork showcases the diversity within the species.",
         imageUrl: findImageByName('multi_agave.jpeg')
     },
@@ -63,6 +69,7 @@ export const portfolioItems = [
         id: 7,
         title: "Orchid Beauty",
         price: "$130",
+        type: "watercolor",
         details: "A delicate portrayal of an orchid in bloom. The soft colors and fine details make this piece a favorite among flower enthusiasts.",
         imageUrl: findImageByName('orchid.jpeg')
     },
@@ -70,6 +77,7 @@ export const portfolioItems = [
         id: 8,
         title: "Owl in the Night",
         price: "$170",
+        type: "watercolor",
         details: "A mysterious and enchanting depiction of an owl perched in the night. The dark background contrasts with the owl's bright eyes.",
         imageUrl: findImageByName('owl.jpeg')
     },
@@ -77,6 +85,7 @@ export const portfolioItems = [
         id: 9,
         title: "Pink Agave",
         price: "$140",
+        type: "watercolor",
         details: "A stunning representation of a pink agave plant. The unusual color palette makes this piece stand out.",
         imageUrl: findImageByName('pink_agave.jpeg')
     },
@@ -84,6 +93,7 @@ export const portfolioItems = [
         id: 10,
         title: "Pink Mini Agave",
         price: "$95",
+        type: "acrylic",
         details: "A smaller version of the pink agave, this piece is perfect for compact spaces. It retains all the beauty of its larger counterpart.",
         imageUrl: findImageByName('pink_mini_agave.jpeg')
     },
@@ -91,6 +101,7 @@ export const portfolioItems = [
         id: 11,
         title: "Single Flower",
         price: "$80",
+        type: "acrylic",
         details: "A simple yet elegant piece showcasing a single flower. The focus on one bloom highlights its natural beauty.",
         imageUrl: findImageByName('single_flower.jpeg')
     },
@@ -98,6 +109,7 @@ export const portfolioItems = [
         id: 12,
         title: "Skull Agave",
         price: "$220",
+        type: "pencil",
         details: "A unique blend of a skull and agave plant, this piece has a dark, edgy vibe. It's perfect for those who appreciate unconventional art.",
         imageUrl: findImageByName('skull_agave.jpeg')
     }
