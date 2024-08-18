@@ -53,7 +53,7 @@ const Portfolio = () => {
     return (
         <>
             <NavBar />
-            <Box sx={{ padding: 4 }}>
+            <Box sx={{ padding: 4, backgroundColor: '#f7f9fc', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
                 <Grid container spacing={4}>
                     {portfolioItems.map((item, index) => (
                         <PortfolioItem key={index} item={item} />

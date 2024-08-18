@@ -82,7 +82,7 @@ const PortfolioItemDetails = () => {
     return (
         <>
             <NavBar />
-            <Box sx={{ padding: 4 }}>
+            <Box sx={{ padding: 4, backgroundColor: '#f7f9fc', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
                 <IconButton
                     edge="start"
                     color="inherit"
