@@ -12,10 +12,9 @@ import {
 } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
-import { portfolioItems } from '../portfolioData';
 import NavBar from '../navbar/navbar';
 
-const PortfolioItemDetailsComponent = () => {
+const PortfolioItemDetailsComponent = ({ portfolioItems }) => {
     const { id } = useParams();
     const item = portfolioItems.find((item) => item.id === parseInt(id));
     const [selectedImage, setSelectedImage] = useState(item.imageUrls[0]);

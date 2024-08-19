@@ -1,21 +1,3 @@
-// Import all images from the images directory
-const importAll = (requireContext) => {
-    return requireContext.keys().map(key => ({
-        name: key.substring(2), // Remove the './' from the beginning
-        src: requireContext(key).default || requireContext(key)
-    }));
-};
-
-const images = importAll(require.context('./images', false, /\.(png|jpe?g|svg)$/));
-
-const imageBase = "https://github.com/JWriter20/KyliePortfolio/blob/main/src/images/";
-
-// Function to find the image source by filename
-const findImageByName = (name) => {
-    const image = images.find(img => img.name === name);
-    return image ? image.src : null;
-};
-
 export const portfolioItems = [
     {
         id: 1,
@@ -28,8 +10,8 @@ export const portfolioItems = [
         weight: "1 lb",
         details: "A vibrant depiction of a butterfly resting on a green plant. This piece captures the beauty of nature in a moment of stillness.",
         imageUrls: [
-            findImageByName('butterfly_plant.jpeg'),
-            findImageByName('butterfly_plant_2.jpeg')  // Add additional images if available
+            "https://imgur.com/Jf7BGFz",
+            "https://imgur.com/dm26G0X",
         ]
     },
     {
@@ -42,7 +24,7 @@ export const portfolioItems = [
         height: "16\"",
         weight: "1 lb",
         details: "An abstract representation of leaves flowing in the wind. The piece uses soft colors to evoke a sense of calm.",
-        imageUrls: [findImageByName('flow_plant.jpeg')]
+        imageUrls: ["https://imgur.com/W5n5t32"]
     },
     {
         id: 3,
@@ -54,7 +36,7 @@ export const portfolioItems = [
         height: "16\"",
         weight: "1 lb",
         details: "A detailed portrayal of an agave plant in full bloom. The rich textures bring the desert plant to life.",
-        imageUrls: [findImageByName('flower_agave.jpeg')]
+        imageUrls: ["https://imgur.com/Qhd1hLy"]
     },
     {
         id: 4,
@@ -66,7 +48,7 @@ export const portfolioItems = [
         height: "16\"",
         weight: "1 lb",
         details: "An artistic interpretation of a plant with folded leaves. The piece plays with light and shadow to create depth.",
-        imageUrls: [findImageByName('foldy_plant.jpeg')]
+        imageUrls: ["https://imgur.com/Kl4KERd"]
     },
     {
         id: 5,
@@ -78,7 +60,7 @@ export const portfolioItems = [
         height: "16\"",
         weight: "1 lb",
         details: "A small yet detailed depiction of a mini agave plant. Perfect for adding a touch of nature to any space.",
-        imageUrls: [findImageByName('mini_agave.jpeg')]
+        imageUrls: ["https://imgur.com/9isqmJf"]
     },
     {
         id: 6,
@@ -90,7 +72,7 @@ export const portfolioItems = [
         height: "16\"",
         weight: "1 lb",
         details: "A collection of agave plants, each with unique characteristics. The artwork showcases the diversity within the species.",
-        imageUrls: [findImageByName('multi_agave.jpeg')]
+        imageUrls: ["https://imgur.com/FfHxcHc"]
     },
     {
         id: 7,
@@ -102,7 +84,7 @@ export const portfolioItems = [
         height: "16\"",
         weight: "1 lb",
         details: "A delicate portrayal of an orchid in bloom. The soft colors and fine details make this piece a favorite among flower enthusiasts.",
-        imageUrls: [findImageByName('orchid.jpeg')]
+        imageUrls: ["https://imgur.com/BDNzaem"]
     },
     {
         id: 8,
@@ -114,7 +96,7 @@ export const portfolioItems = [
         height: "16\"",
         weight: "1 lb",
         details: "A mysterious and enchanting depiction of an owl perched in the night. The dark background contrasts with the owl's bright eyes.",
-        imageUrls: [findImageByName('owl.jpeg')]
+        imageUrls: ["https://imgur.com/JRTVh6J"]
     },
     {
         id: 9,
@@ -126,7 +108,7 @@ export const portfolioItems = [
         height: "16\"",
         weight: "1 lb",
         details: "A stunning representation of a pink agave plant. The unusual color palette makes this piece stand out.",
-        imageUrls: [findImageByName('pink_agave.jpeg')]
+        imageUrls: ["https://imgur.com/fRRkSgX"]
     },
     {
         id: 10,
@@ -138,7 +120,7 @@ export const portfolioItems = [
         height: "16\"",
         weight: "1 lb",
         details: "A smaller version of the pink agave, this piece is perfect for compact spaces. It retains all the beauty of its larger counterpart.",
-        imageUrls: [findImageByName('pink_mini_agave.jpeg')]
+        imageUrls: ["https://imgur.com/516aDc0"]
     },
     {
         id: 11,
@@ -150,7 +132,7 @@ export const portfolioItems = [
         height: "16\"",
         weight: "1 lb",
         details: "A simple yet elegant piece showcasing a single flower. The focus on one bloom highlights its natural beauty.",
-        imageUrls: [findImageByName('single_flower.jpeg')]
+        imageUrls: ["https://imgur.com/TCHRsAY"]
     },
     {
         id: 12,
@@ -162,6 +144,6 @@ export const portfolioItems = [
         height: "16\"",
         weight: "1 lb",
         details: "A unique blend of a skull and agave plant, this piece has a dark, edgy vibe. It's perfect for those who appreciate unconventional art.",
-        imageUrls: [findImageByName('skull_agave.jpeg')]
+        imageUrls: ["https://imgur.com/ZVl7z0q"]
     }
 ];

@@ -3,6 +3,7 @@ import { Modal, Box, Typography, TextField, Button, Grid } from '@mui/material';
 import DropzoneComponent from 'react-dropzone-component';
 import 'react-dropzone-component/styles/filepicker.css';
 import 'dropzone/dist/min/dropzone.min.css';
+import axios from 'axios';
 
 const AddArtworkModal = ({ isModalOpen, handleCloseModal }) => {
     const [artwork, setArtwork] = useState({
@@ -16,29 +17,53 @@ const AddArtworkModal = ({ isModalOpen, handleCloseModal }) => {
         imageUrls: [],
     });
 
+    const [files, setFiles] = useState([]);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setArtwork({ ...artwork, [name]: value });
     };
 
     const handleFileAdded = (file) => {
-        setArtwork((prevArtwork) => ({
-            ...prevArtwork,
-            imageUrls: [...prevArtwork.imageUrls, file],
-        }));
+        setFiles((prevFiles) => [...prevFiles, file]);
     };
 
     const handleFileRemoved = (file) => {
-        setArtwork((prevArtwork) => ({
-            ...prevArtwork,
-            imageUrls: prevArtwork.imageUrls.filter(
-                (imageFile) => imageFile.name !== file.name
-            ),
-        }));
+        setFiles((prevFiles) => prevFiles.filter((f) => f.name !== file.name));
     };
 
     const handleSubmit = async () => {
-        handleCloseModal();
+        try {
+            const uploadedImages = await Promise.all(
+                files.map(async (file) => {
+                    const formData = new FormData();
+                    formData.append('image', file);
+
+                    const response = await axios.post('https://api.imgur.com/3/image', formData, {
+                        headers: {
+                            Authorization: `Client-ID ${process.env.REACT_APP_IMGUR_CLIENT_ID}`,
+                        },
+                    });
+
+                    return response.data.data.link;
+                })
+            );
+
+            // Update artwork state with the URLs of the uploaded images
+            setArtwork((prevArtwork) => ({
+                ...prevArtwork,
+                imageUrls: uploadedImages,
+            }));
+
+            console.log('Uploaded image URLs:', uploadedImages);
+
+            // Here you could save the artwork details along with the uploaded image URLs to your backend
+            // ...
+
+            handleCloseModal();
+        } catch (error) {
+            console.error('Error uploading images:', error);
+        }
     };
 
     const djsConfig = {
@@ -49,7 +74,7 @@ const AddArtworkModal = ({ isModalOpen, handleCloseModal }) => {
     const componentConfig = {
         iconFiletypes: ['.jpg', '.png', '.gif'],
         showFiletypeIcon: true,
-        postUrl: 'no-url', // this is a placeholder URL; in a real application, you would use the URL of your server to upload images
+        postUrl: 'no-url', // Imgur API handles the upload, so this is not needed
     };
 
     return (

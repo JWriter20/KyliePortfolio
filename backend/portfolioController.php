@@ -58,23 +58,3 @@ function deletePortfolioDetail($id) {
     header('Content-Type: application/json');
     echo json_encode(['message' => 'Portfolio detail deleted successfully']);
 }
-
-// 4. Upload image and return URL
-function uploadImage() {
-    if (isset($_FILES['image'])) {
-        $uploadDir = __DIR__ . '/public_html/';
-        $uploadFile = $uploadDir . basename($_FILES['image']['name']);
-        
-        if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadFile)) {
-            $url = 'https://yourdomain.com/public_html/' . basename($_FILES['image']['name']);
-            header('Content-Type: application/json');
-            echo json_encode(['url' => $url]);
-        } else {
-            header('HTTP/1.1 500 Internal Server Error');
-            echo json_encode(['message' => 'Failed to upload image']);
-        }
-    } else {
-        header('HTTP/1.1 400 Bad Request');
-        echo json_encode(['message' => 'No image provided']);
-    }
-}

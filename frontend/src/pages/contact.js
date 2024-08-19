@@ -1,7 +1,6 @@
 import React from 'react';
 import { Container, Grid, Typography, TextField, Button, Box, Card, CardMedia } from '@mui/material';
 import NavBar from '../navbar/navbar';
-import contactKiwi from '../images/contactKylie.jpg';
 
 const ContactPageComponent = () => {
     return (
@@ -87,7 +86,7 @@ const ContactPageComponent = () => {
                         <CardMedia
                             component="img"
                             alt="Artwork"
-                            image={contactKiwi}
+                            image="https://imgur.com/fnI8ApG.jpeg"
                             title="Artwork Title"
                             sx={{
                                 borderRadius: '8px',

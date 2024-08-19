@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
     Card,
     CardActionArea,
@@ -14,7 +15,6 @@ import {
     Button
 } from '@mui/material';
 import { Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material';
-import { portfolioItems } from '../portfolioData';
 import NavBar from '../navbar/navbar';
 import { useNavigate, useLocation } from 'react-router-dom';
 import AddArtworkModal from './addArtworkModal';
@@ -38,7 +38,7 @@ const PortfolioItem = ({ item, isAdmin }) => {
                     <CardMedia
                         component="img"
                         height="200"
-                        image={item.imageUrls[0]}
+                        image={item.imageUrls[0]} // Assuming imageUrls contains public URLs
                         alt={item.title}
                     />
                     <CardContent>
@@ -73,10 +73,24 @@ const PortfolioItem = ({ item, isAdmin }) => {
 
 const Portfolio = () => {
     const [selectedTab, setSelectedTab] = useState(0);
+    const [portfolioItems, setPortfolioItems] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const location = useLocation();
     const adminKey = new URLSearchParams(location.search).get('adminKey');
     const isAdmin = adminKey && adminKey === process.env.REACT_APP_ADMIN_KEY;
+
+    useEffect(() => {
+        const fetchPortfolioItems = async () => {
+            try {
+                const response = await axios.get('http://localhost:4000/api/portfolio');
+                setPortfolioItems(response.data);
+            } catch (error) {
+                console.error('Error fetching portfolio items:', error);
+            }
+        };
+
+        fetchPortfolioItems();
+    }, []);
 
     const handleTabChange = (event, newValue) => {
         setSelectedTab(newValue);
@@ -124,9 +138,10 @@ const Portfolio = () => {
                     <Tab label="Watercolor" />
                 </Tabs>
                 <Grid container spacing={4}>
-                    {filteredItems.map((item, index) => (
-                        <PortfolioItem key={index} item={item} isAdmin={isAdmin} />
-                    ))}
+                    {filteredItems.map((item, index) => {
+                        const parsedItem = { ...item, imageUrls: JSON.parse(item.imageUrls) };
+                        return <PortfolioItem key={index} item={parsedItem} isAdmin={isAdmin} />;
+                    })}
                 </Grid>
             </Box>
 

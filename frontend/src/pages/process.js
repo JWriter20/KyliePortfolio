@@ -1,7 +1,6 @@
 import React from 'react';
 import { Container, Grid, Typography, Box, Card, CardMedia, CardContent } from '@mui/material';
 import NavBar from '../navbar/navbar';
-import kiwiWithBird from '../images/KyWithBird.jpg';
 
 const ArtworkProcessPageComponent = () => {
     return (
@@ -43,7 +42,7 @@ const ArtworkProcessPageComponent = () => {
                         <CardMedia
                             component="img"
                             alt="Artist Working"
-                            image={kiwiWithBird}
+                            image="https://imgur.com/qK5WfBJ.jpeg"
                             title="Artist Working"
                             sx={{
                                 borderRadius: '8px',

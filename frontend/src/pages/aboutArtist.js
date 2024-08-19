@@ -1,7 +1,6 @@
 import React from 'react';
 import { Container, Grid, Typography, Box, Card, CardMedia, CardContent } from '@mui/material';
 import NavBar from '../navbar/navbar';
-import KylieWorking from '../images/aboutTheArtist.jpg';
 
 const AboutTheArtistComponent = () => {
     return (
@@ -37,7 +36,7 @@ const AboutTheArtistComponent = () => {
                         <CardMedia
                             component="img"
                             alt="Artist Portrait"
-                            image={KylieWorking}
+                            image="https://imgur.com/wELLpkR.jpeg"
                             title="Artist Portrait"
                             sx={{
                                 borderRadius: '8px',

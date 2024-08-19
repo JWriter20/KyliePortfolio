@@ -9,8 +9,6 @@ $dotenv->load();
 // Include the controller functions
 require 'portfolioController.php';
 
-include_once("public/index.html");
-
 // Routing logic
 $method = $_SERVER['REQUEST_METHOD'];
 $uri = $_SERVER['REQUEST_URI'];
@@ -21,10 +19,12 @@ if ($method === 'GET' && $uri === '/api/portfolio') {
     addPortfolioDetail();
 } elseif ($method === 'DELETE' && preg_match('/\/api\/portfolio\/(\d+)/', $uri, $matches)) {
     deletePortfolioDetail($matches[1]);
-} elseif ($method === 'POST' && $uri === '/api/upload') {
-    uploadImage();
 } else {
-    // Return a 404 response for any undefined routes
-    header("HTTP/1.1 404 Not Found");
-    echo json_encode(['message' => 'Endpoint not found']);
+    if (strpos($uri, '/api/') === 0) {
+        header("HTTP/1.1 404 Not Found");
+        echo json_encode(['message' => 'Endpoint not found']);
+    } else {
+        // Serve the React app for any non-API routes
+        include_once("public/index.html");
+    }
 }
