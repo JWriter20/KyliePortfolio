@@ -16,8 +16,6 @@ const AddArtworkModal = ({ isModalOpen, handleCloseModal }) => {
         imageUrls: [],
     });
 
-    const clientId = 'YOUR_IMGUR_CLIENT_ID';
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setArtwork({ ...artwork, [name]: value });
@@ -39,40 +37,7 @@ const AddArtworkModal = ({ isModalOpen, handleCloseModal }) => {
         }));
     };
 
-    const uploadImageToImgur = async (file) => {
-        const formData = new FormData();
-        formData.append('image', file);
-
-        try {
-            const response = await axios.post('https://api.imgur.com/3/image', formData, {
-                headers: {
-                    Authorization: `Client-ID ${clientId}`,
-                },
-            });
-
-            return response.data.data.link; // Return the link of the uploaded image
-        } catch (error) {
-            console.error('Error uploading image to Imgur:', error);
-            return null;
-        }
-    };
-
     const handleSubmit = async () => {
-        // Upload images to Imgur and get the URLs
-        const uploadedImageUrls = await Promise.all(
-            artwork.imageUrls.map((file) => uploadImageToImgur(file))
-        );
-
-        // Set the imageUrls in the artwork object to the Imgur URLs
-        const updatedArtwork = {
-            ...artwork,
-            imageUrls: uploadedImageUrls.filter((url) => url !== null),
-        };
-
-        // Submit the form data
-        console.log(updatedArtwork);
-
-        // Handle modal close
         handleCloseModal();
     };
 
