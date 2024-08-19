@@ -2,6 +2,7 @@
   "name": "my-app",
   "version": "0.1.0",
   "private": true,
+  "homepage": "/public",
   "dependencies": {
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
@@ -20,7 +21,7 @@
   },
   "scripts": {
     "start": "PORT=4000 react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && mkdir -p ../backend/public && mv ./build/* ../backend/public/",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

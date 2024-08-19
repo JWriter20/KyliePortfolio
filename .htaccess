@@ -1,0 +1,11 @@
+<FilesMatch "^\.env">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+RewriteEngine On
+RewriteBase /
+RewriteRule ^public/index\.html$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /public/index.html [L]

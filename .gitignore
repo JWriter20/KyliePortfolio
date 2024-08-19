@@ -10,6 +10,12 @@
 
 # production
 /build
+backend/public
+backend/vendor
+backend/.env
+frontend/build
+frontend/.env
+frontend/node_modules
 
 # misc
 .DS_Store
