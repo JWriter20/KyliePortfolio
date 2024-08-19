@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Card,
     CardMedia,
@@ -13,11 +13,60 @@ import {
 import { ArrowBack } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import NavBar from '../navbar/navbar';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchPortfolioDetails } from '../redux/portfolioData.js';
+import { useStripe } from '@stripe/react-stripe-js';
 
-const PortfolioItemDetailsComponent = ({ portfolioItems }) => {
+const PortfolioItemDetailsComponent = () => {
     const { id } = useParams();
+    const dispatch = useDispatch();
+    const portfolioItems = useSelector((state) => state.portfolio.portfolioDetails);
+    const portfolioStatus = useSelector((state) => state.portfolio.status);
+    const [selectedImage, setSelectedImage] = useState('');
+    const stripe = useStripe(); // Move useStripe here
+
+    useEffect(() => {
+        if (portfolioStatus === 'idle') {
+            dispatch(fetchPortfolioDetails());
+        }
+    }, [portfolioStatus, dispatch]);
+
     const item = portfolioItems.find((item) => item.id === parseInt(id));
-    const [selectedImage, setSelectedImage] = useState(item.imageUrls[0]);
+
+    useEffect(() => {
+        if (item) {
+            setSelectedImage(item.imageUrls[0]);
+        }
+    }, [item]);
+
+    const handleCheckout = async () => {
+        try {
+            const response = await fetch(`/api/checkout/${id}`, {
+                method: 'POST',
+            });
+
+            const data = await response.json();
+
+            if (data.error) {
+                console.error('Error creating checkout session:', data.error);
+                return;
+            }
+
+            const { error } = await stripe.redirectToCheckout({
+                sessionId: data.id,
+            });
+
+            if (error) {
+                console.error('Stripe checkout error:', error);
+            }
+        } catch (error) {
+            console.error('Checkout error:', error);
+        }
+    };
+
+    if (portfolioStatus === 'loading') {
+        return <Typography variant="h6">Loading...</Typography>;
+    }
 
     if (!item) {
         return <Typography variant="h6">Item not found</Typography>;
@@ -66,7 +115,7 @@ const PortfolioItemDetailsComponent = ({ portfolioItems }) => {
                         {item.details}
                     </Typography>
                     <Box mt={2}>
-                        <Typography variant="h6">Price: {item.price}</Typography>
+                        <Typography variant="h6">Price: ${item.price / 100}</Typography>
                         <Typography variant="body1">
                             Size: {item.width} x {item.height}
                         </Typography>
@@ -78,7 +127,7 @@ const PortfolioItemDetailsComponent = ({ portfolioItems }) => {
                         </Typography>
                     </Box>
                     <Box mt={3}>
-                        <Button variant="contained" color="primary" fullWidth>
+                        <Button variant="contained" color="primary" fullWidth onClick={handleCheckout}>
                             Buy Now
                         </Button>
                     </Box>

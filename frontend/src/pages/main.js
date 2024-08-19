@@ -11,24 +11,25 @@ import {
     Tab,
     Tabs,
     IconButton,
-    Modal,
     Button
 } from '@mui/material';
-import { Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material';
+import { Delete as DeleteIcon, Add as AddIcon, Edit } from '@mui/icons-material';
 import NavBar from '../navbar/navbar';
 import { useNavigate, useLocation } from 'react-router-dom';
 import AddArtworkModal from './addArtworkModal';
+import { useDispatch, useSelector } from 'react-redux';
+import { deletePortfolioDetail, fetchPortfolioDetails } from '../redux/portfolioData.js';
 
-const PortfolioItem = ({ item, isAdmin }) => {
+const PortfolioItem = ({ item, isAdmin, handleEdit }) => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const handleClick = () => {
         navigate(`/details/${item.id}`);
     };
 
     const handleDelete = () => {
-        // Logic to delete the item goes here
-        console.log(`Deleted item with ID: ${item.id}`);
+        dispatch(deletePortfolioDetail(item.id));
     };
 
     return (
@@ -49,60 +50,73 @@ const PortfolioItem = ({ item, isAdmin }) => {
                             {item.details}
                         </Typography>
                         <Typography variant="body1" color="text.primary">
-                            {item.price}
+                            ${item.price / 100}
                         </Typography>
                     </CardContent>
                 </CardActionArea>
                 {isAdmin && (
-                    <IconButton
-                        onClick={handleDelete}
-                        sx={{
-                            position: 'absolute',
-                            bottom: 8,
-                            right: 8,
-                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                        }}
-                    >
-                        <DeleteIcon />
-                    </IconButton>
+                    <>
+                        <IconButton
+                            onClick={handleDelete}
+                            sx={{
+                                position: 'absolute',
+                                bottom: 8,
+                                right: 8,
+                                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                            }}
+                        >
+                            <DeleteIcon />
+                        </IconButton>
+                        <IconButton
+                            onClick={() => handleEdit(item.id)}
+                            sx={{
+                                position: 'absolute',
+                                bottom: 8,
+                                right: 55,
+                                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                            }}
+                        >
+                            <Edit />
+                        </IconButton>
+                    </>
                 )}
             </Card>
         </Grid>
     );
 };
 
+
 const Portfolio = () => {
+    const dispatch = useDispatch();
+    const portfolioItems = useSelector((state) => state.portfolio.portfolioDetails);
+    const portfolioStatus = useSelector((state) => state.portfolio.status);
     const [selectedTab, setSelectedTab] = useState(0);
-    const [portfolioItems, setPortfolioItems] = useState([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState({ open: false, id: null });
     const location = useLocation();
     const adminKey = new URLSearchParams(location.search).get('adminKey');
     const isAdmin = adminKey && adminKey === process.env.REACT_APP_ADMIN_KEY;
 
     useEffect(() => {
-        const fetchPortfolioItems = async () => {
-            try {
-                const response = await axios.get('http://localhost:4000/api/portfolio');
-                setPortfolioItems(response.data);
-            } catch (error) {
-                console.error('Error fetching portfolio items:', error);
-            }
-        };
-
-        fetchPortfolioItems();
-    }, []);
+        if (portfolioStatus === 'idle') {
+            dispatch(fetchPortfolioDetails());
+        }
+    }, [portfolioStatus, dispatch]);
 
     const handleTabChange = (event, newValue) => {
         setSelectedTab(newValue);
     };
 
     const handleOpenModal = () => {
-        setIsModalOpen(true);
+        setIsModalOpen({ open: true, id: null });
     };
 
     const handleCloseModal = () => {
-        setIsModalOpen(false);
+        setIsModalOpen({ open: false, id: null });
     };
+
+    const handleEdit = (id) => {
+        setIsModalOpen({ open: true, id });
+    }
 
     const filterType = ['All', 'pencil', 'acrylic', 'watercolor'][selectedTab];
 
@@ -139,15 +153,15 @@ const Portfolio = () => {
                 </Tabs>
                 <Grid container spacing={4}>
                     {filteredItems.map((item, index) => {
-                        const parsedItem = { ...item, imageUrls: JSON.parse(item.imageUrls) };
-                        return <PortfolioItem key={index} item={parsedItem} isAdmin={isAdmin} />;
+                        return <PortfolioItem key={index} item={item} isAdmin={isAdmin} handleEdit={handleEdit} />;
                     })}
                 </Grid>
             </Box>
 
-            <AddArtworkModal isModalOpen={isModalOpen} handleCloseModal={handleCloseModal} />
+            <AddArtworkModal isModalOpen={isModalOpen.open} handleCloseModal={handleCloseModal} existingId={isModalOpen.id || null} />
         </>
     );
 };
 
 export default Portfolio;
+

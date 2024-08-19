@@ -25,6 +25,15 @@ function getPortfolioDetails() {
     echo json_encode($results);
 }
 
+function getPortfolioDetail($id) {
+    global $pdo;
+
+    $stmt = $pdo->prepare("SELECT * FROM portfolio_details WHERE id = :id");
+    $stmt->execute([':id' => $id]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return $result;
+}
 // 2. Add a new portfolio entry
 function addPortfolioDetail() {
     global $pdo;
@@ -48,6 +57,30 @@ function addPortfolioDetail() {
     echo json_encode(['message' => 'Portfolio detail added successfully']);
 }
 
+function updatePortfolioDetail($id) {
+    global $pdo;
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    $stmt = $pdo->prepare("UPDATE portfolio_details 
+                           SET title = :title, price = :price, type = :type, isFramed = :isFramed, width = :width, height = :height, weight = :weight, details = :details, imageUrls = :imageUrls 
+                           WHERE id = :id");
+    $stmt->execute([
+        ':title' => $data['title'],
+        ':price' => $data['price'],
+        ':type' => $data['type'],
+        ':isFramed' => $data['isFramed'],
+        ':width' => $data['width'],
+        ':height' => $data['height'],
+        ':weight' => $data['weight'],
+        ':details' => $data['details'],
+        ':imageUrls' => json_encode($data['imageUrls']),
+        ':id' => $id,
+    ]);
+
+    header('Content-Type: application/json');
+    echo json_encode(['message' => 'Portfolio detail updated successfully']);
+}
+
 // 3. Delete a portfolio entry
 function deletePortfolioDetail($id) {
     global $pdo;
@@ -58,3 +91,45 @@ function deletePortfolioDetail($id) {
     header('Content-Type: application/json');
     echo json_encode(['message' => 'Portfolio detail deleted successfully']);
 }
+
+// 4. Create Checkout Session
+function createCheckoutSession($id) {
+    \Stripe\Stripe::setApiKey($_ENV['STRIPE_TEST_SECRET_KEY']);
+
+    $portfolioDetail = getPortfolioDetail($id);
+
+    if (!$portfolioDetail) {
+        http_response_code(404);
+        echo json_encode(['error' => 'Portfolio item not found']);
+        return;
+    }
+
+    try {
+    $checkoutSession = \Stripe\Checkout\Session::create([
+        'payment_method_types' => ['card'],
+        'line_items' => [[
+            'price_data' => [
+                'currency' => 'usd',
+                'product_data' => [
+                    'name' => $portfolioDetail['title'],
+                ],
+                'unit_amount' => $portfolioDetail['price'],
+            ],
+            'quantity' => 1,
+        ]],
+        'mode' => 'payment',
+        'success_url' => 'https://localhost:4000/order-confirmation',
+        'cancel_url' => 'https://localhost:4000/order-failure',
+    ]);
+
+    header('Content-Type: application/json');
+    echo json_encode(['id' => $checkoutSession->id]);
+} catch (Exception $e) {
+    // Encode the error message in the cancel URL
+    $encodedErrorMessage = urlencode($e->getMessage());
+    header('Location: https://localhost:4000/order-failure?error_message=' . $encodedErrorMessage);
+    exit();
+}
+
+}
+

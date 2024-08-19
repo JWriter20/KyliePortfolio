@@ -42,7 +42,7 @@ const ArtworkProcessPageComponent = () => {
                         <CardMedia
                             component="img"
                             alt="Artist Working"
-                            image="https://imgur.com/qK5WfBJ.jpeg"
+                            image="https://i.imgur.com/qK5WfBJ.jpg"
                             title="Artist Working"
                             sx={{
                                 borderRadius: '8px',

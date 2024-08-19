@@ -86,7 +86,7 @@ const ContactPageComponent = () => {
                         <CardMedia
                             component="img"
                             alt="Artwork"
-                            image="https://imgur.com/fnI8ApG.jpeg"
+                            image="https://i.imgur.com/fnI8ApG.jpg"
                             title="Artwork Title"
                             sx={{
                                 borderRadius: '8px',

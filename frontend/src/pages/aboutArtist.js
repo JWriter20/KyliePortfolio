@@ -36,7 +36,7 @@ const AboutTheArtistComponent = () => {
                         <CardMedia
                             component="img"
                             alt="Artist Portrait"
-                            image="https://imgur.com/wELLpkR.jpeg"
+                            image="https://i.imgur.com/wELLpkR.jpg"
                             title="Artist Portrait"
                             sx={{
                                 borderRadius: '8px',

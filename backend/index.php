@@ -19,6 +19,10 @@ if ($method === 'GET' && $uri === '/api/portfolio') {
     addPortfolioDetail();
 } elseif ($method === 'DELETE' && preg_match('/\/api\/portfolio\/(\d+)/', $uri, $matches)) {
     deletePortfolioDetail($matches[1]);
+} elseif ($method === 'PUT' && preg_match('/\/api\/portfolio\/(\d+)/', $uri, $matches)) {
+    updatePortfolioDetail($matches[1]);
+} elseif ($method === 'POST' && preg_match('/\/api\/checkout\/(\d+)/', $uri, $matches)) {
+    createCheckoutSession($matches[1]);
 } else {
     if (strpos($uri, '/api/') === 0) {
         header("HTTP/1.1 404 Not Found");

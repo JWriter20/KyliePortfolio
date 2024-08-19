@@ -28,7 +28,7 @@ export default function NavBar() {
                         letterSpacing: '0.1rem'
                     }}
                 >
-                    Artist Portfolio
+                    Writer Studios
                 </Typography>
                 <Box>
                     <Button

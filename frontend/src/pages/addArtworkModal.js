@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Modal, Box, Typography, TextField, Button, Grid } from '@mui/material';
 import DropzoneComponent from 'react-dropzone-component';
 import 'react-dropzone-component/styles/filepicker.css';
 import 'dropzone/dist/min/dropzone.min.css';
 import axios from 'axios';
+import { addPortfolioDetail, updatePortfolioDetail, fetchPortfolioDetails } from '../redux/portfolioData.js';
 
-const AddArtworkModal = ({ isModalOpen, handleCloseModal }) => {
+const AddArtworkModal = ({ isModalOpen, handleCloseModal, existingId }) => {
+    const dispatch = useDispatch();
+    const portfolioDetails = useSelector(state => state.portfolio.portfolioDetails);
     const [artwork, setArtwork] = useState({
         title: '',
         price: '',
@@ -16,8 +20,19 @@ const AddArtworkModal = ({ isModalOpen, handleCloseModal }) => {
         details: '',
         imageUrls: [],
     });
-
     const [files, setFiles] = useState([]);
+
+    // Fetch and populate existing artwork data if existingId is provided
+    useEffect(() => {
+        if (existingId) {
+            const existingArtwork = portfolioDetails.find(item => item.id === existingId);
+            if (existingArtwork) {
+                setArtwork(existingArtwork);
+            } else {
+                dispatch(fetchPortfolioDetails());
+            }
+        }
+    }, [existingId, dispatch, portfolioDetails]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -38,31 +53,46 @@ const AddArtworkModal = ({ isModalOpen, handleCloseModal }) => {
                 files.map(async (file) => {
                     const formData = new FormData();
                     formData.append('image', file);
+                    formData.append('type', 'file'); // or 'base64' if the image is base64 encoded
+                    formData.append('title', 'Simple upload');
+                    formData.append('description', 'This is a simple image upload in Imgur');
 
-                    const response = await axios.post('https://api.imgur.com/3/image', formData, {
-                        headers: {
-                            Authorization: `Client-ID ${process.env.REACT_APP_IMGUR_CLIENT_ID}`,
-                        },
-                    });
+                    try {
+                        const response = await axios.post('https://api.imgur.com/3/image', formData, {
+                            headers: {
+                                Authorization: `Client-ID ${process.env.REACT_APP_IMGUR_CLIENT_ID}`,
+                            },
+                        });
 
-                    return response.data.data.link;
+                        return response.data.data.link;
+                    } catch (error) {
+                        console.error('Image upload failed', error);
+                        throw error; // re-throw to handle this in the outer code
+                    }
                 })
             );
 
-            // Update artwork state with the URLs of the uploaded images
-            setArtwork((prevArtwork) => ({
-                ...prevArtwork,
-                imageUrls: uploadedImages,
-            }));
 
-            console.log('Uploaded image URLs:', uploadedImages);
+            const newArtwork = {
+                ...artwork,
+                imageUrls: [...artwork.imageUrls, ...uploadedImages],
+            };
+            console.log('New artwork:', newArtwork);
 
-            // Here you could save the artwork details along with the uploaded image URLs to your backend
-            // ...
+            if (existingId) {
+                dispatch(updatePortfolioDetail({ id: existingId, data: newArtwork }));
+                dispatch(fetchPortfolioDetails());
+                console.log('Artwork updated:', newArtwork);
+            } else {
+                dispatch(addPortfolioDetail(newArtwork));
+                dispatch(fetchPortfolioDetails());
+                console.log('Artwork added:', newArtwork);
+            }
 
+            // Close the modal after the data is submitted
             handleCloseModal();
         } catch (error) {
-            console.error('Error uploading images:', error);
+            console.error('Error uploading images or submitting artwork:', error);
         }
     };
 
@@ -97,7 +127,7 @@ const AddArtworkModal = ({ isModalOpen, handleCloseModal }) => {
                 m: 2,
             }}>
                 <Typography id="add-artwork-modal" variant="h6" component="h2">
-                    Add New Artwork
+                    {existingId ? 'Edit Artwork' : 'Add New Artwork'}
                 </Typography>
 
                 <Grid container spacing={2} sx={{ mt: 2 }}>
@@ -182,7 +212,7 @@ const AddArtworkModal = ({ isModalOpen, handleCloseModal }) => {
                 </Grid>
 
                 <Button onClick={handleSubmit} sx={{ mt: 2 }} variant="contained" color="primary">
-                    Submit
+                    {existingId ? 'Update' : 'Submit'}
                 </Button>
                 <Button onClick={handleCloseModal} sx={{ mt: 2, ml: 2 }}>
                     Close
