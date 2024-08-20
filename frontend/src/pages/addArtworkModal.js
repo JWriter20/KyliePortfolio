@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Modal, Box, Typography, TextField, Button, Grid } from '@mui/material';
 import DropzoneComponent from 'react-dropzone-component';
@@ -21,6 +21,7 @@ const AddArtworkModal = ({ isModalOpen, handleCloseModal, existingId }) => {
         imageUrls: [],
     });
     const [files, setFiles] = useState([]);
+    const dropzoneRef = useRef(null);  // Reference for Dropzone
 
     // Fetch and populate existing artwork data if existingId is provided
     useEffect(() => {
@@ -28,6 +29,27 @@ const AddArtworkModal = ({ isModalOpen, handleCloseModal, existingId }) => {
             const existingArtwork = portfolioDetails.find(item => item.id === existingId);
             if (existingArtwork) {
                 setArtwork(existingArtwork);
+
+                // Download and load the images from URLs with lower resolution thumbnails
+                existingArtwork.imageUrls.forEach(async (url) => {
+                    const thumbnailUrl = url.replace(/(\.\w+)$/, 'm$1'); // Replace with a medium thumbnail version
+                    const response = await fetch(url);
+                    const blob = await response.blob();
+                    const fileName = url.split('/').pop(); // Extract the file name from the URL
+                    const file = new File([blob], fileName, { type: blob.type });
+
+                    if (dropzoneRef.current) {
+                        const dropzone = dropzoneRef.current.dropzone;
+                        dropzone.emit('addedfile', file);
+
+                        // Set the thumbnail using the lower resolution image
+                        dropzone.emit('thumbnail', file, thumbnailUrl);
+
+                        dropzone.emit('complete', file);
+
+                        setFiles((prevFiles) => [...prevFiles, file]);
+                    }
+                });
             } else {
                 dispatch(fetchPortfolioDetails());
             }
@@ -51,6 +73,11 @@ const AddArtworkModal = ({ isModalOpen, handleCloseModal, existingId }) => {
         try {
             const uploadedImages = await Promise.all(
                 files.map(async (file) => {
+                    // Skip uploading existing images that were loaded from URLs
+                    if (artwork.imageUrls.includes(file.name)) {
+                        return file.name; // return the existing image URL
+                    }
+
                     const formData = new FormData();
                     formData.append('image', file);
                     formData.append('type', 'file'); // or 'base64' if the image is base64 encoded
@@ -72,12 +99,10 @@ const AddArtworkModal = ({ isModalOpen, handleCloseModal, existingId }) => {
                 })
             );
 
-
             const newArtwork = {
                 ...artwork,
                 imageUrls: [...artwork.imageUrls, ...uploadedImages],
             };
-            console.log('New artwork:', newArtwork);
 
             if (existingId) {
                 dispatch(updatePortfolioDetail({ id: existingId, data: newArtwork }));
@@ -90,6 +115,16 @@ const AddArtworkModal = ({ isModalOpen, handleCloseModal, existingId }) => {
             }
 
             // Close the modal after the data is submitted
+            setArtwork({
+                title: '',
+                price: '',
+                type: '',
+                width: '',
+                height: '',
+                weight: '',
+                details: '',
+                imageUrls: [],
+            });
             handleCloseModal();
         } catch (error) {
             console.error('Error uploading images or submitting artwork:', error);
@@ -110,7 +145,19 @@ const AddArtworkModal = ({ isModalOpen, handleCloseModal, existingId }) => {
     return (
         <Modal
             open={isModalOpen}
-            onClose={handleCloseModal}
+            onClose={() => {
+                setArtwork({
+                    title: '',
+                    price: '',
+                    type: '',
+                    width: '',
+                    height: '',
+                    weight: '',
+                    details: '',
+                    imageUrls: [],
+                });
+                handleCloseModal();
+            }}
             aria-labelledby="add-artwork-modal"
             aria-describedby="add-artwork-modal-description"
         >
@@ -201,6 +248,7 @@ const AddArtworkModal = ({ isModalOpen, handleCloseModal, existingId }) => {
                             Upload Images
                         </Typography>
                         <DropzoneComponent
+                            ref={dropzoneRef}  // Add the ref here
                             config={componentConfig}
                             djsConfig={djsConfig}
                             eventHandlers={{
@@ -214,7 +262,20 @@ const AddArtworkModal = ({ isModalOpen, handleCloseModal, existingId }) => {
                 <Button onClick={handleSubmit} sx={{ mt: 2 }} variant="contained" color="primary">
                     {existingId ? 'Update' : 'Submit'}
                 </Button>
-                <Button onClick={handleCloseModal} sx={{ mt: 2, ml: 2 }}>
+                <Button onClick={() => {
+                    setArtwork({
+                        title: '',
+                        price: '',
+                        type: '',
+                        width: '',
+                        height: '',
+                        weight: '',
+                        details: '',
+                        imageUrls: [],
+                    });
+                    handleCloseModal();
+                }}
+                    sx={{ mt: 2, ml: 2 }}>
                     Close
                 </Button>
             </Box>

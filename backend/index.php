@@ -23,6 +23,8 @@ if ($method === 'GET' && $uri === '/api/portfolio') {
     updatePortfolioDetail($matches[1]);
 } elseif ($method === 'POST' && preg_match('/\/api\/checkout\/(\d+)/', $uri, $matches)) {
     createCheckoutSession($matches[1]);
+} elseif ($method === 'GET' && preg_match('/\/api\/checkout-session\/(.+)/', $uri, $matches)) {
+    getCheckoutSession($matches[1]);
 } else {
     if (strpos($uri, '/api/') === 0) {
         header("HTTP/1.1 404 Not Found");

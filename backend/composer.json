@@ -1,10 +1,5 @@
 {
     "name": "kyportfolio/backend",
-    "autoload": {
-        "psr-4": {
-            "Kyportfolio\\Backend\\": "src/"
-        }
-    },
     "authors": [
         {
             "name": "Jake Writer",
