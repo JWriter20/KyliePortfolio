@@ -9,9 +9,15 @@ $port = $_ENV['DB_PORT'];
 $database = $_ENV['DB_DATABASE'];
 $username = $_ENV['DB_USERNAME'];
 $password = $_ENV['DB_PASSWORD'];
+$twilioSid = $_ENV['TWILIO_SID'];
+$twilioAuthToken = $_ENV['TWILIO_AUTH_TOKEN'];
+$twilioFromNumber = $_ENV['TWILIO_FROM_NUMBER'];
+$twilioToNumber = $_ENV['TWILIO_TO_NUMBER'];
 
 $pdo = new PDO("mysql:host=$host;port=$port;dbname=$database;charset=utf8mb4", $username, $password);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+$twilio = new Twilio\Rest\Client($twilioSid, $twilioAuthToken);
 
 // 1. Read portfolio details
 function getPortfolioDetails() {
@@ -121,7 +127,7 @@ function createCheckoutSession($id) {
             'shipping_address_collection' => [
                 'allowed_countries' => ['US', 'CA'], // Specify allowed countries, or remove this to allow all.
             ],
-            'success_url' => 'https://writerstudios.net/order-confirmation?session_id={CHECKOUT_SESSION_ID}',
+            'success_url' => 'https://writerstudios.net/order-confirmation?session_id={CHECKOUT_SESSION_ID}&painting_id=' . urlencode($id),
             'cancel_url' => 'https://writerstudios.net/order-failure',
         ]);
 
@@ -152,6 +158,51 @@ function getCheckoutSession($sessionId) {
         // Handle error appropriately
         header('Content-Type: application/json');
         echo json_encode(['error' => 'Error retrieving session: ' . $e->getMessage()]);
+    }
+}
+
+// On success, execute these steps
+function handleSuccessfulTransaction($sessionId, $paintingId) {
+    global $twilio, $pdo, $twilioFromNumber, $twilioToNumber;
+
+    try {
+        // 1. Retrieve details about the sold painting
+        $paintingDetails = getPortfolioDetail($paintingId);
+
+        // 2. Remove the entry from the database
+        deletePortfolioDetail($paintingId);
+
+        // 3. Get the address details from the Stripe checkout session
+        $session = \Stripe\Checkout\Session::retrieve($sessionId);
+        $shippingDetails = $session->shipping_details;
+        $email = $session->customer_details->email;
+
+        // 4. Add a transaction entry to stripe_checkout_sessions
+        $stmt = $pdo->prepare("INSERT INTO stripe_checkout_sessions (session_id, painting_id) VALUES (:session_id, :painting_id)");
+        $stmt->execute([':session_id' => $sessionId, ':painting_id' => $paintingId]);
+
+        // 5. Send a text message using Twilio API
+        $messageBody = "Painting Sold: " . $paintingDetails['title'] . "\n" .
+                       "Price: $" . ($paintingDetails['price'] / 100) . "\n" .
+                       "Email: " . $email . "\n" .
+                       "Shipping to: " . $shippingDetails->name . "\n" .
+                       "Address: " . $shippingDetails->address->line1 . ", " .
+                                    $shippingDetails->address->city . ", " .
+                                    $shippingDetails->address->state . " " .
+                                    $shippingDetails->address->postal_code . ", " .
+                                    $shippingDetails->address->country;
+
+        $twilio->messages->create(
+            $twilioToNumber,
+            [
+                'from' => $twilioFromNumber,
+                'body' => $messageBody
+            ]
+        );
+
+        echo json_encode(['message' => 'Transaction processed successfully']);
+    } catch (Exception $e) {
+        echo json_encode(['error' => 'Error processing transaction: ' . $e->getMessage()]);
     }
 }
 

@@ -25,6 +25,11 @@ if ($method === 'GET' && $uri === '/api/portfolio') {
     createCheckoutSession($matches[1]);
 } elseif ($method === 'GET' && preg_match('/\/api\/checkout-session\/(.+)/', $uri, $matches)) {
     getCheckoutSession($matches[1]);
+} elseif ($method === 'POST' && preg_match('/\/api\/transaction\/success\/(.+)\/(\d+)/', $uri, $matches)) {
+    // New API route for handling successful transactions
+    $sessionId = $matches[1];
+    $paintingId = $matches[2];
+    handleSuccessfulTransaction($sessionId, $paintingId);
 } else {
     if (strpos($uri, '/api/') === 0) {
         header("HTTP/1.1 404 Not Found");
