@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import {
     Card,
     CardActionArea,
@@ -33,14 +32,46 @@ const PortfolioItem = ({ item, isAdmin, handleEdit }) => {
     };
 
     return (
-        <Grid item xs={12} sm={6} md={4}>
-            <Card sx={{ backgroundColor: '#fff', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '12px', position: 'relative' }}>
-                <CardActionArea onClick={handleClick}>
+        <Grid item xs={12} sm={6} md={4} sx={{ transition: 'all 0.5s ease' }}>
+            <Card
+                sx={{
+                    backgroundColor: '#fff',
+                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                    borderRadius: '12px',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    height: '100%', // Ensure the card takes full height
+                }}
+            >
+                <CardActionArea
+                    onClick={handleClick}
+                    sx={{
+                        height: '100%',
+                        '&:hover .MuiCardContent-root': {
+                            transform: 'translateY(0)',
+                            opacity: 1,
+                        },
+                        '& .MuiCardContent-root': {
+                            transition: 'transform 0.3s ease, opacity 0.3s ease',
+                            transform: 'translateY(100%)',
+                            opacity: 0,
+                            position: 'absolute',
+                            bottom: 0,
+                            left: 0,
+                            width: '100%',
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        },
+                    }}
+                >
                     <CardMedia
                         component="img"
-                        height="200"
                         image={item.imageUrls[0]} // Assuming imageUrls contains public URLs
                         alt={item.title}
+                        sx={{
+                            height: '60vh', // Set a taller height for the image
+                            width: '100%',
+                            objectFit: 'cover', // Ensure the image covers the entire area
+                        }}
                     />
                     <CardContent>
                         <Typography variant="h6" component="div" color="text.primary" sx={{ fontWeight: 'bold' }}>
@@ -85,7 +116,6 @@ const PortfolioItem = ({ item, isAdmin, handleEdit }) => {
     );
 };
 
-
 const Portfolio = () => {
     const dispatch = useDispatch();
     const portfolioItems = useSelector((state) => state.portfolio.portfolioDetails);
@@ -101,6 +131,16 @@ const Portfolio = () => {
             dispatch(fetchPortfolioDetails());
         }
     }, [portfolioStatus, dispatch]);
+
+    useEffect(() => {
+        const handleResize = () => {
+            // Force a re-render on resize
+            setSelectedTab((prev) => prev);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const handleTabChange = (event, newValue) => {
         setSelectedTab(newValue);
@@ -127,7 +167,7 @@ const Portfolio = () => {
     return (
         <>
             <NavBar />
-            <Box sx={{ padding: 4, backgroundColor: '#f7f9fc', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Box sx={{ padding: 4, backgroundColor: '#f7f9fc', minHeight: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 {isAdmin && (
                     <Button
                         variant="contained"
@@ -144,14 +184,43 @@ const Portfolio = () => {
                     onChange={handleTabChange}
                     textColor="primary"
                     indicatorColor="primary"
-                    sx={{ marginBottom: 4 }}
+                    sx={{
+                        marginBottom: 4,
+                        '.MuiTabs-flexContainer': {
+                            justifyContent: 'center',
+                            gap: '12px',
+                        },
+                        '.MuiTab-root': {
+                            minWidth: '80px',
+                            padding: '10px 16px',
+                            fontSize: '16px',
+                            fontWeight: '500',
+                            color: '#6b6b6b',
+                            textTransform: 'capitalize',
+                            transition: 'color 0.3s, transform 0.3s',
+                            '&:hover': {
+                                color: '#333',
+                                transform: 'scale(1.05)',
+                            },
+                            '&.Mui-selected': {
+                                color: '#1976d2',
+                                fontWeight: 'bold',
+                            },
+                        },
+                        '.MuiTabs-indicator': {
+                            height: '3px',
+                            borderRadius: '2px',
+                        },
+                    }}
                 >
                     <Tab label="All" />
                     <Tab label="Pencil" />
                     <Tab label="Acrylic" />
                     <Tab label="Watercolor" />
                 </Tabs>
-                <Grid container spacing={4}>
+                <Grid container spacing={4} sx={{
+                    transition: 'all 0.5s ease', // Add smooth transition to the grid container
+                }}>
                     {filteredItems.map((item, index) => {
                         return <PortfolioItem key={index} item={item} isAdmin={isAdmin} handleEdit={handleEdit} />;
                     })}

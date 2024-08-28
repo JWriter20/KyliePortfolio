@@ -11,6 +11,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Box from '@mui/material/Box';
 import { useNavigate } from 'react-router-dom';
+import Logo from '../images/WriterStudiosLogo.png';
 
 export default function NavBar() {
     const navigate = useNavigate();
@@ -22,7 +23,7 @@ export default function NavBar() {
 
     const handleNavigation = (path) => {
         navigate(path);
-        setDrawerOpen(false); // Close drawer after navigation
+        setDrawerOpen(false);
     };
 
     return (
@@ -30,22 +31,37 @@ export default function NavBar() {
             <AppBar
                 position="static"
                 sx={{
-                    background: `linear-gradient(200deg, #3a0ca3 0%, #f72585 100%)`,
-                    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)',
+                    backgroundColor: '#1e1e1e',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
                 }}
             >
                 <Toolbar>
+                    <IconButton
+                        edge="start"
+                        color="inherit"
+                        aria-label="logo"
+                        sx={{ mr: 2 }}
+                    >
+                        <img
+                            src={Logo}
+                            alt="Writer Studios Logo"
+                            style={{ height: 40, marginRight: 10 }} // Adjust the logo size and spacing as needed
+                        />
+                    </IconButton>
                     <Typography
                         variant="h6"
                         component="div"
                         sx={{
                             flexGrow: 1,
-                            fontFamily: 'Arial, sans-serif',
-                            fontWeight: 'bold',
-                            letterSpacing: '0.1rem'
+                            fontFamily: "'Playfair Display', serif",
+                            fontWeight: 400,
+                            letterSpacing: '0.2rem',
+                            fontSize: '1.5rem',
+                            textTransform: 'uppercase',
+                            color: '#fff',
                         }}
                     >
-                        Writer Studios
+                        WRITER STUDIOS
                     </Typography>
                     <Box
                         sx={{
@@ -57,9 +73,10 @@ export default function NavBar() {
                             sx={{
                                 marginRight: 2,
                                 color: '#fff',
-                                fontWeight: '500',
+                                fontWeight: '300',
+                                fontSize: '0.875rem',
                                 '&:hover': {
-                                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
                                 }
                             }}
                         >
@@ -70,9 +87,10 @@ export default function NavBar() {
                             sx={{
                                 marginRight: 2,
                                 color: '#fff',
-                                fontWeight: '500',
+                                fontWeight: '300',
+                                fontSize: '0.875rem',
                                 '&:hover': {
-                                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
                                 }
                             }}
                         >
@@ -83,9 +101,10 @@ export default function NavBar() {
                             sx={{
                                 marginRight: 2,
                                 color: '#fff',
-                                fontWeight: '500',
+                                fontWeight: '300',
+                                fontSize: '0.875rem',
                                 '&:hover': {
-                                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
                                 }
                             }}
                         >
@@ -95,9 +114,10 @@ export default function NavBar() {
                             onClick={() => handleNavigation("/process")}
                             sx={{
                                 color: '#fff',
-                                fontWeight: '500',
+                                fontWeight: '300',
+                                fontSize: '0.875rem',
                                 '&:hover': {
-                                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
                                 }
                             }}
                         >
