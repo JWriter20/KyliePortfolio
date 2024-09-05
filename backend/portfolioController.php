@@ -164,6 +164,7 @@ function getCheckoutSession($sessionId) {
 // On success, execute these steps
 function handleSuccessfulTransaction($sessionId, $paintingId) {
     global $twilio, $pdo, $twilioFromNumber, $twilioToNumber;
+    \Stripe\Stripe::setApiKey($_ENV['STRIPE_TEST_SECRET_KEY']);
 
     try {
         // 1. Retrieve details about the sold painting
