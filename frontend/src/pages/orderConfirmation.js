@@ -9,7 +9,6 @@ const OrderConfirmation = () => {
     const location = useLocation();
     const sessionId = new URLSearchParams(location.search).get('session_id');
     const artworkId = new URLSearchParams(location.search).get('painting_id');
-    console.log(sessionId);
     const navigate = useNavigate();
 
     const [address, setAddress] = useState({
@@ -42,6 +41,7 @@ const OrderConfirmation = () => {
                     console.error('Error fetching session data:', error);
                 });
         }
+
         if (sessionId && artworkId) {
             axios.post(`/api/transaction/success/${sessionId}/${artworkId}`)
                 .then(response => {
@@ -54,7 +54,8 @@ const OrderConfirmation = () => {
                     console.error('Error fulfilling order:', error);
                 });
         }
-    }, [sessionId]);
+    }, [sessionId, artworkId]); // Dependency array includes artworkId
+
 
     return (
         <Box sx={{ padding: 4 }}>
